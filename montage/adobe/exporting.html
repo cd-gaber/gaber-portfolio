@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المرحلة النهائية — Exporting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#050a10;
+    --panel:#070d15;
+    --panel-2:#091320;
+    --cyan:#2be3f6;
+    --cyan-dim:rgba(43,227,246,.28);
+    --mint:#3dffb0;
+    --red:#ff5c5c;
+    --amber:#ffb84d;
+    --text:#e9f6f7;
+    --text-dim:#7c95a0;
+    --mono:'Space Mono', monospace;
+    --arabic:'Tajawal', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--arabic);
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+  body::before{
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(var(--cyan-dim) 1px, transparent 1px),
+      linear-gradient(90deg, var(--cyan-dim) 1px, transparent 1px);
+    background-size:56px 56px;
+    opacity:.05;
+    pointer-events:none;
+  }
+  body::after{
+    content:'';
+    position:fixed; top:-20%; right:-10%;
+    width:60vw; height:60vw;
+    background:radial-gradient(circle, rgba(43,227,246,.10), transparent 60%);
+    pointer-events:none;
+  }
+
+  .wrap{ max-width:980px; margin:0 auto; padding:28px 20px 80px; position:relative; }
+
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    font-family:var(--mono); font-size:12px; color:var(--text-dim);
+    letter-spacing:.5px; padding-bottom:22px; border-bottom:1px solid rgba(43,227,246,.15);
+    margin-bottom:32px;
+  }
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px;
+    color:var(--cyan); text-decoration:none; font-family:var(--arabic); font-weight:700; font-size:14px;
+    transition:opacity .2s;
+  }
+  .back-link:hover{ opacity:.7; }
+  .progress-tag{ color:var(--mint); }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:11px; color:var(--mint);
+    border:1px solid rgba(61,255,176,.4); padding:5px 12px; border-radius:3px;
+    margin-bottom:18px; letter-spacing:1px;
+  }
+  .eyebrow .dot{ width:6px; height:6px; border-radius:50%; background:var(--mint); box-shadow:0 0 8px var(--mint); animation:pulse 1.6s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+  .hero-box{
+    border:1px solid var(--cyan);
+    box-shadow:0 0 30px rgba(43,227,246,.08), inset 0 0 40px rgba(43,227,246,.03);
+    border-radius:4px;
+    padding:36px 32px;
+    margin-bottom:40px;
+    position:relative;
+  }
+  .hero-box::before, .hero-box::after{
+    content:''; position:absolute; width:14px; height:14px;
+    border:2px solid var(--cyan);
+  }
+  .hero-box::before{ top:-1px; right:-1px; border-left:none; border-bottom:none; }
+  .hero-box::after{ bottom:-1px; left:-1px; border-right:none; border-top:none; }
+
+  h1{
+    font-size:clamp(28px,5vw,42px);
+    font-weight:900;
+    line-height:1.25;
+    margin-bottom:10px;
+  }
+  h1 .en{ font-family:var(--mono); color:var(--mint); font-weight:700; font-size:.5em; display:block; margin-top:6px; letter-spacing:1px;}
+  .hero-desc{ color:var(--text-dim); font-size:15.5px; line-height:1.9; max-width:640px; margin-top:14px; }
+
+  .meta-row{ display:flex; gap:22px; margin-top:22px; flex-wrap:wrap; font-family:var(--mono); font-size:12px; color:var(--text-dim); }
+  .meta-row span b{ color:var(--cyan); font-weight:700; }
+
+  /* export progress bar signature */
+  .export-mockup{
+    margin-top:28px;
+    border:1px solid rgba(43,227,246,.3);
+    border-radius:3px;
+    background:var(--panel-2);
+    padding:18px 20px;
+  }
+  .export-row{ display:flex; justify-content:space-between; align-items:center; font-family:var(--mono); font-size:11px; color:var(--text-dim); margin-bottom:10px; }
+  .export-row b{ color:var(--mint); }
+  .bar-track{ height:10px; border-radius:5px; background:rgba(43,227,246,.1); overflow:hidden; border:1px solid rgba(43,227,246,.25); }
+  .bar-fill{
+    height:100%; width:0%;
+    background:linear-gradient(90deg, var(--cyan), var(--mint));
+    border-radius:5px;
+    animation:fill 3s ease-in-out infinite;
+  }
+  @keyframes fill{ 0%{ width:5%;} 70%{ width:92%;} 100%{ width:92%;} }
+
+  .section-title{
+    display:flex; align-items:center; gap:12px;
+    margin:44px 0 18px;
+  }
+  .section-title .num{ font-family:var(--mono); color:var(--mint); font-size:13px; border:1px solid rgba(61,255,176,.4); padding:2px 8px; border-radius:2px;}
+  .section-title h2{ font-size:19px; font-weight:700; }
+  .section-title::after{ content:''; flex:1; height:1px; background:linear-gradient(90deg, rgba(43,227,246,.3), transparent); }
+
+  .intro-note{ color:var(--text-dim); font-size:14.5px; line-height:1.95; margin-bottom:6px; }
+
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:640px){ .grid{ grid-template-columns:1fr; } }
+
+  .card{
+    border:1px solid rgba(43,227,246,.35);
+    border-radius:3px;
+    padding:20px;
+    background:var(--panel);
+    transition:border-color .2s, transform .2s;
+  }
+  .card:hover{ border-color:var(--cyan); transform:translateY(-2px); }
+  .card-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .card-icon{ font-family:var(--mono); color:var(--mint); font-size:13px; }
+  .card h3{ font-size:15.5px; font-weight:700; }
+  .card p{ color:var(--text-dim); font-size:13.5px; line-height:1.85; }
+  .card .en-term{ font-family:var(--mono); color:var(--cyan); font-size:12px; }
+  .card .example{ margin-top:10px; padding-top:10px; border-top:1px dashed rgba(43,227,246,.25); font-size:12.5px; color:var(--mint); }
+  .card .example b{ color:var(--text-dim); font-weight:400; }
+
+  .steps{ display:flex; flex-direction:column; gap:0; border-top:1px solid rgba(43,227,246,.15); }
+  .step{ display:flex; gap:18px; align-items:flex-start; padding:18px 4px; border-bottom:1px solid rgba(43,227,246,.15); }
+  .step .idx{
+    font-family:var(--mono); color:var(--bg); background:var(--mint);
+    width:30px; height:30px; min-width:30px; border-radius:2px;
+    display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700;
+  }
+  .step .body h4{ font-size:14.5px; margin-bottom:4px; font-weight:700; }
+  .step .body p{ color:var(--text-dim); font-size:13px; line-height:1.8; }
+
+  .kbd-row{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+  .kbd{
+    font-family:var(--mono); font-size:12px; color:var(--mint);
+    border:1px solid rgba(61,255,176,.4); background:rgba(61,255,176,.05);
+    padding:6px 10px; border-radius:2px; display:flex; gap:8px; align-items:center;
+  }
+  .kbd b{ color:var(--text); font-weight:400; font-family:var(--arabic); }
+
+  .mistakes{ display:flex; flex-direction:column; gap:12px; }
+  .mistake{
+    display:flex; gap:14px; align-items:flex-start;
+    border-right:2px solid var(--red);
+    background:rgba(255,92,92,.05);
+    padding:14px 16px; border-radius:2px;
+  }
+  .mistake .mark{ font-family:var(--mono); color:var(--red); font-size:14px; font-weight:700; }
+  .mistake h4{ font-size:14px; margin-bottom:3px; }
+  .mistake p{ color:var(--text-dim); font-size:13px; line-height:1.8; }
+  .mistake .fix{ color:var(--mint); font-size:12.5px; margin-top:5px; }
+  .mistake .fix b{ color:var(--text-dim); font-weight:400; }
+
+  /* platform table */
+  .platform-table{ width:100%; border-collapse:collapse; margin-top:8px; }
+  .platform-table th, .platform-table td{
+    text-align:right; padding:12px 14px; font-size:13px;
+    border-bottom:1px solid rgba(43,227,246,.15);
+  }
+  .platform-table th{ font-family:var(--mono); font-size:11px; color:var(--mint); font-weight:400; letter-spacing:.5px; }
+  .platform-table td{ color:var(--text-dim); }
+  .platform-table td.platform-name{ color:var(--text); font-weight:700; }
+
+  .recap-box{
+    border:1px solid rgba(61,255,176,.35); border-radius:3px;
+    background:rgba(61,255,176,.04); padding:22px 24px; margin-top:44px;
+  }
+  .recap-box h3{ font-size:16px; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .recap-list{ display:flex; flex-direction:column; gap:10px; }
+  .recap-list li{ list-style:none; display:flex; gap:10px; font-size:13.5px; color:var(--text-dim); line-height:1.8; }
+  .recap-list li::before{ content:'✓'; color:var(--mint); font-weight:700; }
+
+  .cta{
+    margin-top:32px; border:1px solid var(--amber); border-radius:4px;
+    padding:26px; background:rgba(255,184,77,.04);
+    display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;
+  }
+  .cta-info h3{ font-size:16px; margin-bottom:6px; }
+  .cta-info p{ color:var(--text-dim); font-size:13px; margin-bottom:8px; }
+  .file-meta{ font-family:var(--mono); font-size:11.5px; color:var(--amber); display:flex; gap:14px; flex-wrap:wrap; }
+  .btn{
+    font-family:var(--arabic); font-weight:700; font-size:14px;
+    background:var(--mint); color:#04140d; border:none;
+    padding:12px 26px; border-radius:22px; cursor:pointer;
+    transition:transform .15s, box-shadow .15s;
+    white-space:nowrap; text-decoration:none; display:inline-block;
+  }
+  .btn:hover{ transform:translateY(-1px); box-shadow:0 4px 18px rgba(61,255,176,.35); }
+  .btn.amber{ background:var(--amber); }
+  .btn.amber:hover{ box-shadow:0 4px 18px rgba(255,184,77,.35); }
+
+  /* completion banner (last lesson) */
+  .completion{
+    margin-top:32px; text-align:center; padding:34px 20px;
+    border:1px dashed rgba(61,255,176,.4); border-radius:4px;
+    background:rgba(61,255,176,.03);
+  }
+  .completion h3{ font-size:18px; color:var(--mint); margin-bottom:8px; }
+  .completion p{ color:var(--text-dim); font-size:13.5px; }
+
+  footer{ text-align:center; margin-top:50px; font-family:var(--mono); font-size:11px; color:var(--text-dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <a href="../adobe.premiere.pro.html" class="back-link">→ رجوع لكل الدروس</a>
+    <span class="progress-tag">الدرس 06 / 06</span>
+  </div>
+
+  <div class="eyebrow"><span class="dot"></span> LESSON LOADED</div>
+
+  <div class="hero-box">
+    <h1>المرحلة النهائية<span class="en">EXPORTING</span></h1>
+    <p class="hero-desc">
+      كل الشغل اللي عملته ملوش قيمة لو الإكسبورت طلع بجودة وحشة أو المقاس مش مناسب للمنصة. في الدرس ده هنتعلم أفضل إعدادات Export لكل منصة، وإزاي تصدّر فيديو بأعلى جودة من غير ما يبقى حجمه كبير قوي.
+    </p>
+    <div class="meta-row">
+      <span>⏱ <b>35 دقيقة</b></span>
+      <span>📦 <b>ملف تدريب واحد</b></span>
+      <span>🎯 <b>مستوى مبتدئ</b></span>
+    </div>
+
+    <div class="export-mockup">
+      <div class="export-row"><span>Exporting: final_cut_v3.mp4</span><b>H.264 · 1080p</b></div>
+      <div class="bar-track"><div class="bar-fill"></div></div>
+    </div>
+  </div>
+
+  <p class="intro-note">
+    الإكسبورت مش خطوة روتينية آخر حاجة تعملها بسرعة — هو الفرق بين فيديو شكله احترافي على أي شاشة، وفيديو مضغوط أو متقطع لما يتفتح. الجزء ده بسيط لما تفهمه، بس لو اتغلط فيه بيبوظ كل مجهودك اللي فات.
+  </p>
+
+  <div class="section-title"><span class="num">01</span><h2>أفضل إعدادات لكل منصة</h2></div>
+  <table class="platform-table">
+    <thead>
+      <tr>
+        <th>المنصة</th>
+        <th>الصيغة</th>
+        <th>الدقة</th>
+        <th>ملاحظة</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="platform-name">يوتيوب</td>
+        <td>H.264 (MP4)</td>
+        <td>1080p / 4K</td>
+        <td>Bitrate عالي نسبياً للجودة</td>
+      </tr>
+      <tr>
+        <td class="platform-name">انستجرام / تيك توك</td>
+        <td>H.264 (MP4)</td>
+        <td>1080x1920 (عمودي)</td>
+        <td>مدة أقصر وحجم ملف أصغر</td>
+      </tr>
+      <tr>
+        <td class="platform-name">عرض لعميل</td>
+        <td>ProRes / MOV</td>
+        <td>حسب المصدر</td>
+        <td>جودة أعلى بدون ضغط زيادة</td>
+      </tr>
+      <tr>
+        <td class="platform-name">أرشفة شخصية</td>
+        <td>ProRes / DNxHR</td>
+        <td>حسب المصدر</td>
+        <td>يحافظ على أعلى جودة ممكنة</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-title"><span class="num">02</span><h2>خطوات تصدير فيديو نضيف</h2></div>
+  <div class="steps">
+    <div class="step">
+      <span class="idx">1</span>
+      <div class="body">
+        <h4>افتح Export Settings</h4>
+        <p>من File > Export > Media، أو اختصار Ctrl+M على السيكوينس اللي عايز تصدره.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="idx">2</span>
+      <div class="body">
+        <h4>اختار الصيغة والـ Preset المناسب للمنصة</h4>
+        <p>حسب الجدول اللي فوق — H.264 لمعظم منصات النشر، ProRes للأرشفة أو تسليم عميل.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="idx">3</span>
+      <div class="body">
+        <h4>راجع الدقة والـ Frame Rate</h4>
+        <p>لازم يطابقوا إعدادات السيكوينس الأصلية، إلا لو عايز تغيرهم لسبب معين (مثلاً تصغير الدقة للسوشيال ميديا).</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="idx">4</span>
+      <div class="body">
+        <h4>اضبط الـ Bitrate</h4>
+        <p>استخدم VBR 2 Pass بدل CBR للحصول على جودة أفضل بحجم ملف أصغر.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="idx">5</span>
+      <div class="body">
+        <h4>راجع الصوت قبل التصدير النهائي</h4>
+        <p>تأكد إن الصوت مش مقطوع (Clipping) واختار AAC كصيغة صوت قياسية.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="idx">6</span>
+      <div class="body">
+        <h4>شغّل الملف النهائي وراجعه كامل</h4>
+        <p>افتح الملف بعد التصدير وشوفه من أول لآخر قبل ما ترفعه أو تبعته — أخطاء زي فريز أو مشاكل صوت بتظهر هنا بس.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="num">03</span><h2>أخطاء شائعة لازم تتجنبها</h2></div>
+  <div class="mistakes">
+    <div class="mistake">
+      <span class="mark">✕</span>
+      <div>
+        <h4>تصدير بدقة أو نسبة أبعاد غلط للمنصة</h4>
+        <p>فيديو أفقي على تيك توك أو رأسي على يوتيوب بيبان بشكل غير احترافي.</p>
+        <div class="fix"><b>الحل:</b> اعرف مقاس ونسبة أبعاد كل منصة قبل ما تبدأ الإكسبورت.</div>
+      </div>
+    </div>
+    <div class="mistake">
+      <span class="mark">✕</span>
+      <div>
+        <h4>Bitrate منخفض قوي عشان تقلل حجم الملف</h4>
+        <p>بيظهر تشويش (Compression Artifacts) خصوصاً في المشاهد اللي فيها حركة كتير.</p>
+        <div class="fix"><b>الحل:</b> استخدم VBR 2 Pass بمعدل Bitrate يناسب الدقة، مش أقل رقم ممكن.</div>
+      </div>
+    </div>
+    <div class="mistake">
+      <span class="mark">✕</span>
+      <div>
+        <h4>رفع الفيديو من غير ما تراجعه بعد التصدير</h4>
+        <p>مشاكل زي كليب ناقص أو صوت مش متزامن ممكن تفوتك وأنت شغال، وتظهر بس في الملف النهائي.</p>
+        <div class="fix"><b>الحل:</b> خصص دايماً وقت لمراجعة الملف كامل قبل النشر.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="num">04</span><h2>اختصارات هتوفرلك وقتك</h2></div>
+  <div class="kbd-row">
+    <div class="kbd"><span>Ctrl+M</span><b>فتح Export Settings</b></div>
+    <div class="kbd"><span>Ctrl+Alt+M</span><b>إضافة للـ Queue</b></div>
+  </div>
+
+  <div class="recap-box">
+    <h3>📌 خلاصة الدرس</h3>
+    <ul class="recap-list">
+      <li>اختار الصيغة والدقة حسب المنصة اللي هتنشر عليها، مش إعداد ثابت لكل حاجة.</li>
+      <li>VBR 2 Pass بيدّيك أفضل توازن بين الجودة وحجم الملف.</li>
+      <li>مراجعة الملف كامل بعد التصدير خطوة إلزامية، مش اختيارية.</li>
+    </ul>
+  </div>
+
+  <div class="cta">
+    <div class="cta-info">
+      <h3>ملف التدريب جاهز للتحميل</h3>
+      <p>حمّل مشروع جاهز وصدّره بـ3 إعدادات مختلفة (يوتيوب، سوشيال ميديا، ProRes) وقارن الفرق.</p>
+      <div class="file-meta">
+        <span>📁 exporting-practice.zip</span>
+        <span>💾 350 MB</span>
+        <span>🎞 مشروع Premiere كامل</span>
+      </div>
+    </div>
+    <a href="#" class="btn amber" download>تحميل ملف التمرين ↓</a>
+  </div>
+
+  <div class="completion">
+    <h3>🎬 كده خلصت كل دروس الكورس</h3>
+    <p>من أساسيات القص لحد التصدير النهائي — دلوقتي عندك كل الأدوات اللي محتاجها تبدأ تصنع مشاريعك بنفسك.</p>
+  </div>
+
+  <footer>ADOBE PREMIERE PRO — COURSE MODULE 06</footer>
+</div>
+</body>
+</html>
