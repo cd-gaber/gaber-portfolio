@@ -1,1 +1,31 @@
-444444444444444444444
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>تصحيح وتلوين الفيديو - Color Page | DaVinci Resolve</title><style>@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif}body{background:#050A11;color:#fff;line-height:2.1}body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 20% 20%, rgba(0,240,255,0.07) 0%, transparent 50%);pointer-events:none}.header{border:2px solid #00F0FF;border-radius:12px;margin:20px auto;max-width:950px;padding:16px 22px;display:flex;justify-content:space-between;box-shadow:0 0 20px rgba(0,240,255,0.3)}.header span{color:#00FF88;font-size:11px}h1{font-size:18px} .card{border:1.5px solid rgba(0,240,255,0.3);border-radius:14px;max-width:950px;margin:14px auto;background:rgba(5,10,17,0.9);overflow:hidden} .section{padding:22px 26px;border-bottom:1px solid rgba(0,240,255,0.12)} .section:last-child{border:0} .section h2{color:#00F0FF;font-size:17px;margin-bottom:12px;display:flex;gap:8px;align-items:center} .section p{color:#cbd5e1;font-size:13.5px;white-space:pre-line} .badge{background:rgba(0,240,255,0.12);border:1px solid #00F0FF;color:#00F0FF;padding:3px 10px;border-radius:20px;font-size:10px} .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px} .box{background:rgba(0,240,255,0.04);border:1px solid rgba(0,240,255,0.2);border-radius:8px;padding:10px 14px;font-size:12.5px} .box.red{border-color:rgba(255,45,85,0.4);background:rgba(255,45,85,0.06)} .box.green{border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.06)} .kbd{display:inline-block;background:#111;border:1px solid #333;border-bottom:3px solid #333;padding:1px 7px;border-radius:4px;font-family:monospace;color:#00F0FF;font-size:11px} .dl-box{border:2px solid #ff2d55;background:rgba(255,45,85,0.08);border-radius:10px;padding:18px;text-align:center} .dl-btn{display:inline-block;margin-top:12px;padding:10px 26px;background:#ff2d55;color:#fff;text-decoration:none;border-radius:8px;font-weight:900} .back{display:inline-block;color:#00F0FF;border:1px solid #00F0FF;padding:7px 18px;border-radius:20px;text-decoration:none;font-size:12px} @media(max-width:700px){.grid2{grid-template-columns:1fr}}</style></head><body>
+<div class="header"><span>[ DaVinci Resolve ]</span><h1>تصحيح وتلوين الفيديو - Color Page - Color Page - Master</h1></div>
+<div class="card">
+<div class="section"><span class="badge">Color Page - Master</span><h2>📖 1- المقدمة</h2><p>أقوى صفحة في دافينشي. هوليوود كلها بتلون هنا. هتتعلم Nodes و Power Windows و Qualifiers و Magic Mask وازاي تركب LUTs سينمائية حقيقية.</p><div style="background:#000;border:1px solid #00F0FF;border-radius:10px;height:200px;display:flex;align-items:center;justify-content:center;color:#00F0FF;margin-top:14px">▶ فيديو الشرح - 45 د</div></div>
+<div class="section"><h2>🧩 2- أقسام الدرس</h2><div class="grid2"><div class='box'><strong>Nodes</strong><br><span style='color:#94a3b8'>Serial, Parallel, Layer</span></div><div class='box'><strong>Qualifier</strong><br><span style='color:#94a3b8'>عزل لون</span></div><div class='box'><strong>Windows</strong><br><span style='color:#94a3b8'>تحديد مناطق</span></div><div class='box'><strong>Magic Mask</strong><br><span style='color:#94a3b8'>عزل الأشخاص بالـ AI</span></div><div class='box'><strong>LUTs</strong><br><span style='color:#94a3b8'>الفلاتر السينمائية</span></div></div></div>
+<div class="section"><h2>🪜 3- الخطوات العملية</h2><div class='box' style='margin:6px 0;border-right:3px solid #00F0FF'><strong>خطوة 1: Serial Node</strong><br>Alt+S لإضافة Node</div><div class='box' style='margin:6px 0;border-right:3px solid #00F0FF'><strong>خطوة 2: Qualifier</strong><br>اعزل لون البشرة</div><div class='box' style='margin:6px 0;border-right:3px solid #00F0FF'><strong>خطوة 3: Power Window</strong><br>اعمل دائرة على الوش واعمل Track</div><div class='box' style='margin:6px 0;border-right:3px solid #00F0FF'><strong>خطوة 4: تركيب LUT</strong><br>كليك يمين على Node > LUT > اختار الـ .cube</div><div class='box' style='margin:6px 0;border-right:3px solid #00F0FF'><strong>خطوة 5: PowerGrade</strong><br>كليك يمين على الصورة > Grab Still</div></div>
+<div class="section"><h2>⚠️ 4- أخطاء شائعة لازم تتجنبها</h2><div class="grid2"><div class='box red'>❌ تلون قبل ما تصحح الإضاءة</div><div class='box red'>❌ تستخدم Node واحد لكل حاجة</div><div class='box red'>❌ تعلي الـ LUT لـ 100%</div><div class='box red'>❌ تنسى الـ Scopes</div></div></div>
+<div class="section"><h2>⌨️ 5- اختصارات الدرس</h2><div class="grid2"><div class='box'><span class='kbd'>Alt+S</span> → إضافة Node</div><div class='box'><span class='kbd'>Ctrl+G</span> → Grab Still</div><div class='box'><span class='kbd'>Shift+H</span> → Highlight</div></div></div>
+<div class="section"><h2>✅ 6- الخلاصة</h2><p style="background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.3);padding:12px;border-radius:8px">بعد الدرس ده هتبقى Colorist حقيقي وتقدر تاخد 500 جنيه على تلوين الدقيقة.</p></div>
+<div class="section download"><h2>📦 الملفات المرفقة للتحميل</h2><div class="dl-box"><h3>🎨 LUTs Pack - 50+ فلتر سينمائي</h3><p>حزمة ألوان احترافية لـ Premiere و DaVinci. تشمل: Cinematic, Vintage, Black & White, Vlog, Travel.</p><ul><li>صيغة .cube تعمل على أي برنامج</li><li>مع ملف txt فيه كلمة السر وطريقة التركيب</li></ul><a href="https://drive.google.com/your-link" class="dl-btn">تحميل الـ LUTs مجانا ↓</a></div></div>
+<div class="section" style="text-align:center"><a class="back" href="../davinci.html">← رجوع للخريطة الرئيسية</a></div>
+</div></body></html>
