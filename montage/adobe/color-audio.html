@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الصوت وتصحيح الألوان — Audio & Color</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#050a10;
+    --panel:#070d15;
+    --panel-2:#091320;
+    --cyan:#2be3f6;
+    --cyan-dim:rgba(43,227,246,.28);
+    --mint:#3dffb0;
+    --red:#ff5c5c;
+    --amber:#ffb84d;
+    --text:#e9f6f7;
+    --text-dim:#7c95a0;
+    --mono:'Space Mono', monospace;
+    --arabic:'Tajawal', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--arabic);
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+  body::before{
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(var(--cyan-dim) 1px, transparent 1px),
+      linear-gradient(90deg, var(--cyan-dim) 1px, transparent 1px);
+    background-size:56px 56px;
+    opacity:.05;
+    pointer-events:none;
+  }
+  body::after{
+    content:'';
+    position:fixed; top:-20%; right:-10%;
+    width:60vw; height:60vw;
+    background:radial-gradient(circle, rgba(43,227,246,.10), transparent 60%);
+    pointer-events:none;
+  }
+
+  .wrap{ max-width:980px; margin:0 auto; padding:28px 20px 80px; position:relative; }
+
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    font-family:var(--mono); font-size:12px; color:var(--text-dim);
+    letter-spacing:.5px; padding-bottom:22px; border-bottom:1px solid rgba(43,227,246,.15);
+    margin-bottom:32px;
+  }
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px;
+    color:var(--cyan); text-decoration:none; font-family:var(--arabic); font-weight:700; font-size:14px;
+    transition:opacity .2s;
+  }
+  .back-link:hover{ opacity:.7; }
+  .progress-tag{ color:var(--mint); }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:11px; color:var(--mint);
+    border:1px solid rgba(61,255,176,.4); padding:5px 12px; border-radius:3px;
+    margin-bottom:18px; letter-spacing:1px;
+  }
+  .eyebrow .dot{ width:6px; height:6px; border-radius:50%; background:var(--mint); box-shadow:0 0 8px var(--mint); animation:pulse 1.6s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+  .hero-box{
+    border:1px solid var(--cyan);
+    box-shadow:0 0 30px rgba(43,227,246,.08), inset 0 0 40px rgba(43,227,246,.03);
+    border-radius:4px;
+    padding:36px 32px;
+    margin-bottom:40px;
+    position:relative;
+  }
+  .hero-box::before, .hero-box::after{
+    content:''; position:absolute; width:14px; height:14px;
+    border:2px solid var(--cyan);
+  }
+  .hero-box::before{ top:-1px; right:-1px; border-left:none; border-bottom:none; }
+  .hero-box::after{ bottom:-1px; left:-1px; border-right:none; border-top:none; }
+
+  h1{
+    font-size:clamp(28px,5vw,42px);
+    font-weight:900;
+    line-height:1.25;
+    margin-bottom:10px;
+  }
+  h1 .en{ font-family:var(--mono); color:var(--mint); font-weight:700; font-size:.5em; display:block; margin-top:6px; letter-spacing:1px;}
+  .hero-desc{ color:var(--text-dim); font-size:15.5px; line-height:1.9; max-width:640px; margin-top:14px; }
+
+  .meta-row{ display:flex; gap:22px; margin-top:22px; flex-wrap:wrap; font-family:var(--mono); font-size:12px; color:var(--text-dim); }
+  .meta-row span b{ color:var(--cyan); font-weight:700; }
+
+  /* waveform + scope signature */
+  .av-mockup{
+    margin-top:28px;
+    display:grid;
+    grid-template-columns:1.4fr 1fr;
+    gap:10px;
+    height:150px;
+  }
+  .waveform-box, .scope-box{
+    border:1px solid rgba(43,227,246,.3);
+    border-radius:3px;
+    background:var(--panel-2);
+    padding:12px;
+    position:relative;
+    overflow:hidden;
+  }
+  .waveform-box svg, .scope-box svg{ width:100%; height:100%; }
+  .wf-bar{ animation:wf 1.4s ease-in-out infinite; transform-origin:center; }
+  @keyframes wf{ 0%,100%{ transform:scaleY(.4);} 50%{ transform:scaleY(1);} }
+
+  .section-title{
+    display:flex; align-items:center; gap:12px;
+    margin:44px 0 18px;
+  }
+  .section-title .num{ font-family:var(--mono); color:var(--mint); font-size:13px; border:1px solid rgba(61,255,176,.4); padding:2px 8px; border-radius:2px;}
+  .section-title h2{ font-size:19px; font-weight:700; }
+  .section-title::after{ content:''; flex:1; height:1px; background:linear-gradient(90deg, rgba(43,227,246,.3), transparent); }
+
+  .intro-note{ color:var(--text-dim); font-size:14.5px; line-height:1.95; margin-bottom:6px; }
+
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:640px){ .grid{ grid-template-columns:1fr; } }
+
+  .card{
+    border:1px solid rgba(43,227,246,.35);
+    border-radius:3px;
+    padding:20px;
+    background:var(--panel);
+    transition:border-color .2s, transform .2s;
+  }
+  .card:hover{ border-color:var(--cyan); transform:translateY(-2px); }
+  .card-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .card-icon{ font-family:var(--mono); color:var(--mint); font-size:13px; }
+  .card h3{ font-size:15.5px; font-weight:700; }
+  .card p{ color:var(--text-dim); font-size:13.5px; line-height:1.85; }
+  .card .en-term{ font-family:var(--mono); color:var(--cyan); font-size:12px; }
+  .card .example{ margin-top:10px; padding-top:10px; border-top:1px dashed rgba(43,227,246,.25); font-size:12.5px; color:var(--mint); }
+  .card .example b{ color:var(--text-dim); font-weight:400; }
+
+  .steps{ display:flex; flex-direction:column; gap:0; border-top:1px solid rgba(43,227,246,.15); }
+  .step{ display:flex; gap:18px; align-items:flex-start; padding:18px 4px; border-bottom:1px solid rgba(43,227,246,.15); }
+  .step .idx{
+    font-family:var(--mono); color:var(--bg); background:var(--mint);
+    width:30px; height:30px; min-width:30px; border-radius:2px;
+    display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700;
+  }
+  .step .body h4{ font-size:14.5px; margin-bottom:4px; font-weight:700; }
+  .step .body p{ color:var(--text-dim); font-size:13px; line-height:1.8; }
+
+  .kbd-row{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+  .kbd{
+    font-family:var(--mono); font-size:12px; color:var(--mint);
+    border:1px solid rgba(61,255,176,.4); background:rgba(61,255,176,.05);
+    padding:6px 10px; border-radius:2px; display:flex; gap:8px; align-items:center;
+  }
+  .kbd b{ color:var(--text); font-weight:400; font-family:var(--arabic); }
+
+  .mistakes{ display:flex; flex-direction:column; gap:12px; }
+  .mistake{
+    display:flex; gap:14px; align-items:flex-start;
+    border-right:2px solid var(--red);
+    background:rgba(255,92,92,.05);
+    padding:14px 16px; border-radius:2px;
+  }
+  .mistake .mark{ font-family:var(--mono); color:var(--red); font-size:14px; font-weight:700; }
+  .mistake h4{ font-size:14px; margin-bottom:3px; }
+  .mistake p{ color:var(--text-dim); font-size:13px; line-height:1.8; }
+  .mistake .fix{ color:var(--mint); font-size:12.5px; margin-top:5px; }
+  .mistake .fix b{ color:var(--text-dim); font-weight:400; }
+
+  .recap-box{
+    border:1px solid rgba(61,255,176,.35); border-radius:3px;
+    background:rgba(61,255,176,.04); padding:22px 24px; margin-top:44px;
+  }
+  .recap-box h3{ font-size:16px; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .recap-list{ display:flex; flex-direction:column; gap:10px; }
+  .recap-list li{ list-style:none; display:flex; gap:10px; font-size:13.5px; color:var(--text-dim); line-height:1.8; }
+  .recap-list li::before{ content:'✓'; color:var(--mint); font-weight:700; }
+
+  .cta{
+    margin-top:32px; border:1px solid var(--amber); border-radius:4px;
+    padding:26px; background:rgba(255,184,77,.04);
+    display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;
+  }
+  .cta-info h3{ font-size:16px; margin-bottom:6px; }
+  .cta-info p{ color:var(--text-dim); font-size:13px; margin-bottom:8px; }
+  .file-meta{ font-family:var(--mono); font-size:11.5px; color:var(--amber); display:flex; gap:14px; flex-wrap:wrap; }
+  .btn{
+    font-family:var(--arabic); font-weight:700; font-size:14px;
+    background:var(--mint); color:#04140d; border:none;
+    padding:12px 26px; border-radius:22px; cursor:pointer;
+    transition:transform .15s, box-shadow .15s;
+    white-space:nowrap; text-decoration:none; display:inline-block;
+  }
+  .btn:hover{ transform:translateY(-1px); box-shadow:0 4px 18px rgba(61,255,176,.35); }
+  .btn.amber{ background:var(--amber); }
+  .btn.amber:hover{ box-shadow:0 4px 18px rgba(255,184,77,.35); }
+
+  footer{ text-align:center; margin-top:50px; font-family:var(--mono); font-size:11px; color:var(--text-dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <a href="../adobe.premiere.pro.html" class="back-link">→ رجوع لكل الدروس</a>
+    <span class="progress-tag">الدرس 05 / 06</span>
+  </div>
+
+  <div class="eyebrow"><span class="dot"></span> LESSON LOADED</div>
+
+  <div class="hero-box">
+    <h1>الصوت وتصحيح الألوان<span class="en">AUDIO & COLOR</span></h1>
+    <p class="hero-desc">
+      المشاهد بيسامح جودة صورة متوسطة، بس مش بيسامح صوت وحش. في الدرس ده هنتعلم إزاي نظبط الصوت بالـAudio Mixer عشان يطلع نضيف، وإزاي نستخدم Lumetri Color عشان نديله شكل سينمائي متناسق.
+    </p>
+    <div class="meta-row">
+      <span>⏱ <b>50 دقيقة</b></span>
+      <span>📦 <b>ملف تدريب واحد</b></span>
+      <span>🎯 <b>مستوى متوسط</b></span>
+    </div>
+
+    <div class="av-mockup">
+      <div class="waveform-box">
+        <svg viewBox="0 0 200 80" preserveAspectRatio="none">
+          <g fill="#3dffb0">
+            <rect class="wf-bar" x="4" y="30" width="4" height="30" style="animation-delay:0s"/>
+            <rect class="wf-bar" x="12" y="20" width="4" height="45" style="animation-delay:.1s"/>
+            <rect class="wf-bar" x="20" y="10" width="4" height="60" style="animation-delay:.2s"/>
+            <rect class="wf-bar" x="28" y="25" width="4" height="35" style="animation-delay:.3s"/>
+            <rect class="wf-bar" x="36" y="15" width="4" height="50" style="animation-delay:.15s"/>
+            <rect class="wf-bar" x="44" y="30" width="4" height="30" style="animation-delay:.25s"/>
+            <rect class="wf-bar" x="52" y="8" width="4" height="65" style="animation-delay:.05s"/>
+            <rect class="wf-bar" x="60" y="22" width="4" height="40" style="animation-delay:.35s"/>
+            <rect class="wf-bar" x="68" y="30" width="4" height="30" style="animation-delay:.4s"/>
+            <rect class="wf-bar" x="76" y="12" width="4" height="55" style="animation-delay:.12s"/>
+            <rect class="wf-bar" x="84" y="20" width="4" height="45" style="animation-delay:.22s"/>
+            <rect class="wf-bar" x="92" y="28" width="4" height="32" style="animation-delay:.32s"/>
+            <rect class="wf-bar" x="100" y="10" width="4" height="60" style="animation-delay:.08s"/>
+            <rect class="wf-bar" x="108" y="24" width="4" height="38" style="animation-delay:.18s"/>
+            <rect class="wf-bar" x="116" y="30" width="4" height="30" style="animation-delay:.28s"/>
+            <rect class="wf-bar" x="124" y="14" width="4" height="52" style="animation-delay:.38s"/>
+            <rect class="wf-bar" x="132" y="26" width="4" height="34" style="animation-delay:.06s"/>
+            <rect class="wf-bar" x="140" y="18" width="4" height="46" style="animation-delay:.16s"/>
+            <rect class="wf-bar" x="148" y="30" width="4" height="30" style="animation-delay:.26s"/>
+            <rect class="wf-bar" x="156" y="10" width="4" height="58" style="animation-delay:.36s"/>
+            <rect class="wf-bar" x="164" y="22" width="4" height="42" style="animation-delay:.14s"/>
+            <rect class="wf-bar" x="172" y="30" width="4" height="30" style="animation-delay:.24s"/>
+            <rect class="wf-bar" x="180" y="16" width="4" height="48" style="animation-delay:.34s"/>
+            <rect class="wf-bar" x="188" y="28" width="4" height="34" style="animation-delay:.04s"/>
+          </g>
+        </svg>
+      </div>
+      <div class="scope-box">
+        <svg viewBox="0 0 120 80">
+          <line x1="0" y1="40" x2="120" y2="40" stroke="rgba(43,227,246,.2)"/>
+          <line x1="60" y1="0" x2="60" y2="80" stroke="rgba(43,227,246,.2)"/>
+          <circle cx="55" cy="45" r="18" fill="rgba(255,184,77,.25)"/>
+          <circle cx="68" cy="35" r="14" fill="rgba(43,227,246,.25)"/>
+          <circle cx="60" cy="40" r="6" fill="#3dffb0"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <p class="intro-note">
+    كتير من المونتيرين المبتدئين بيركزوا كل وقتهم في القص والتأثيرات وبيسيبوا الصوت والألوان آخر حاجة، مع إن دول أول حاجة بتفرق فعلياً في إحساس المشاهد بجودة الشغل.
+  </p>
+
+  <div class="section-title"><span class="num">01</span><h2>أدوات الصوت والألوان الأساسية</h2></div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-head"><span class="card-icon">🎚</span><h3>Audio Mixer</h3></div>
+      <p>بتتحكم فيه في مستوى صوت كل Track لوحده، وتظبط التوازن بين الكلام والموسيقى والمؤثرات.</p>
+      <div class="example"><b>مثال:</b> تنزل صوت الموسيقى لما المتكلم يبدأ يتكلم (Ducking).</div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-icon">📊</span><h3>Essential Sound Panel</h3></div>
+      <p>بيديك أوامر جاهزة لتحسين صوت الكلام أوتوماتيك زي تقليل الضوضاء وتوضيح الصوت.</p>
+      <div class="example"><b>مثال:</b> Reduce Noise بيشيل صوت المروحة أو التكييف من خلفية الصوت.</div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-icon">🎨</span><h3>Lumetri Color</h3></div>
+      <p>لوحة التحكم في الألوان: التباين، درجة اللون، التشبع، وضبط كل مشهد يبقى نفس الإحساس اللوني.</p>
+      <div class="example"><b>مثال:</b> رفع الـContrast وتقليل الـSaturation شوية بيدي إحساس سينمائي.</div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-icon">📉</span><h3>Scopes</h3></div>
+      <p>رسوم بيانية (Waveform, Vectorscope) بتوريك القيم الحقيقية للصورة بدل ما تعتمد على عينك بس.</p>
+      <div class="example"><b>مثال:</b> الـVectorscope بيوريك لو لون البشرة طبيعي أو مايل للون غريب.</div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="num">02</span><h2>خطوات ظبط الصوت والألوان</h2></div>
+  <div class="steps">
+    <div class="step">
+      <span class="idx">1</span>
+      <div class="body">
+        <h4>ظبط مستوى الصوت العام أولاً</h4>
+        <p>خلي مستوى الكلام حوالي -12dB إلى -6dB كمعيار عام، وابعد عن الـClipping (الصوت اللي بيتقطع من الزيادة).</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="idx">2</span>
+      <div class="body">
+        <h4>نضّف الصوت بالـ Essential Sound Panel</h4>
+        <p>صنّف الـTrack كـ Dialogue واستخدم أدوات التنضيف الجاهزة.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="idx">3</span>
+      <div class="body">
+        <h4>وازن مستوى الموسيقى مع الكلام</h4>
+        <p>الموسيقى لازم تدعم مش تنافس صوت المتكلم — استخدم Ducking أوتوماتيك أو يدوي.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="idx">4</span>
+      <div class="body">
+        <h4>ابدأ بالتصحيح اللوني الأساسي (Correction)</h4>
+        <p>ظبط الـExposure والـWhite Balance الأول عشان الصورة تبقى طبيعية قبل ما تضيف أي ستايل.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="idx">5</span>
+      <div class="body">
+        <h4>ضيف الـ Look (Grading) في الآخر</h4>
+        <p>بعد ما الصورة اتصلحت، ضيف اللمسة الفنية (دافئة، باردة، سينمائية) وطبقها على كل المشاهد بنفس الإحساس.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="num">03</span><h2>أخطاء شائعة لازم تتجنبها</h2></div>
+  <div class="mistakes">
+    <div class="mistake">
+      <span class="mark">✕</span>
+      <div>
+        <h4>مستوى صوت مختلف بين كل كليب والتاني</h4>
+        <p>المشاهد بيحس بتقلبات مزعجة في الصوت طول الفيديو.</p>
+        <div class="fix"><b>الحل:</b> استخدم Loudness Normalization عشان توحد المستوى بين كل الكليبات.</div>
+      </div>
+    </div>
+    <div class="mistake">
+      <span class="mark">✕</span>
+      <div>
+        <h4>تبدأ بالـ Grading قبل التصحيح الأساسي</h4>
+        <p>لو الصورة أصلاً فيها مشكلة إضاءة أو لون، أي فلتر هتحطه فوقها هيبان غريب.</p>
+        <div class="fix"><b>الحل:</b> Correction الأول دايماً، وبعدين Grading.</div>
+      </div>
+    </div>
+    <div class="mistake">
+      <span class="mark">✕</span>
+      <div>
+        <h4>تعتمد على عينك بس من غير Scopes</h4>
+        <p>شاشتك ممكن تكون مظبوطة بشكل مختلف عن شاشات المشاهدين، فاللون اللي شايفه ممكن يبقى غلط عندهم.</p>
+        <div class="fix"><b>الحل:</b> استخدم الـWaveform والـVectorscope كمرجع موضوعي مش بس إحساسك.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="num">04</span><h2>اختصارات هتوفرلك وقتك</h2></div>
+  <div class="kbd-row">
+    <div class="kbd"><span>Shift+9</span><b>Lumetri Color</b></div>
+    <div class="kbd"><span>Shift+6</span><b>Audio Mixer</b></div>
+    <div class="kbd"><span>Ctrl+Alt+C</span><b>نسخ ضبط اللون</b></div>
+  </div>
+
+  <div class="recap-box">
+    <h3>📌 خلاصة الدرس</h3>
+    <ul class="recap-list">
+      <li>الصوت النضيف والمتوازن أهم من أي تأثير بصري في إحساس المشاهد بالجودة.</li>
+      <li>Correction قبل Grading دايماً — صحح الصورة الأول، بعدين حط الستايل.</li>
+      <li>اعتمد على الـScopes مش على عينك بس، لأن الشاشات بتختلف من جهاز لجهاز.</li>
+    </ul>
+  </div>
+
+  <div class="cta">
+    <div class="cta-info">
+      <h3>ملف التدريب جاهز للتحميل</h3>
+      <p>حمّل مشهد فيه مشكلة صوت وألوان، وطبق خطوات التصحيح اللي اتعلمناها بالظبط.</p>
+      <div class="file-meta">
+        <span>📁 audio-color-practice.zip</span>
+        <span>💾 300 MB</span>
+        <span>🎞 3 كليبات + مشروع Premiere</span>
+      </div>
+    </div>
+    <a href="#" class="btn amber" download>تحميل ملف التمرين ↓</a>
+  </div>
+
+  <footer>ADOBE PREMIERE PRO — COURSE MODULE 05</footer>
+</div>
+</body>
+</html>
