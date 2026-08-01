@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مرحلة القص والتحرير — Editing Basics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#050a10;
+    --panel:#070d15;
+    --panel-2:#091320;
+    --cyan:#2be3f6;
+    --cyan-dim:rgba(43,227,246,.28);
+    --mint:#3dffb0;
+    --red:#ff5c5c;
+    --amber:#ffb84d;
+    --text:#e9f6f7;
+    --text-dim:#7c95a0;
+    --mono:'Space Mono', monospace;
+    --arabic:'Tajawal', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--arabic);
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+  body::before{
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(var(--cyan-dim) 1px, transparent 1px),
+      linear-gradient(90deg, var(--cyan-dim) 1px, transparent 1px);
+    background-size:56px 56px;
+    opacity:.05;
+    pointer-events:none;
+  }
+  body::after{
+    content:'';
+    position:fixed; top:-20%; right:-10%;
+    width:60vw; height:60vw;
+    background:radial-gradient(circle, rgba(43,227,246,.10), transparent 60%);
+    pointer-events:none;
+  }
+
+  .wrap{ max-width:980px; margin:0 auto; padding:28px 20px 80px; position:relative; }
+
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    font-family:var(--mono); font-size:12px; color:var(--text-dim);
+    letter-spacing:.5px; padding-bottom:22px; border-bottom:1px solid rgba(43,227,246,.15);
+    margin-bottom:32px;
+  }
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px;
+    color:var(--cyan); text-decoration:none; font-family:var(--arabic); font-weight:700; font-size:14px;
+    transition:opacity .2s;
+  }
+  .back-link:hover{ opacity:.7; }
+  .progress-tag{ color:var(--mint); }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:11px; color:var(--mint);
+    border:1px solid rgba(61,255,176,.4); padding:5px 12px; border-radius:3px;
+    margin-bottom:18px; letter-spacing:1px;
+  }
+  .eyebrow .dot{ width:6px; height:6px; border-radius:50%; background:var(--mint); box-shadow:0 0 8px var(--mint); animation:pulse 1.6s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+  .hero-box{
+    border:1px solid var(--cyan);
+    box-shadow:0 0 30px rgba(43,227,246,.08), inset 0 0 40px rgba(43,227,246,.03);
+    border-radius:4px;
+    padding:36px 32px;
+    margin-bottom:40px;
+    position:relative;
+  }
+  .hero-box::before, .hero-box::after{
+    content:''; position:absolute; width:14px; height:14px;
+    border:2px solid var(--cyan);
+  }
+  .hero-box::before{ top:-1px; right:-1px; border-left:none; border-bottom:none; }
+  .hero-box::after{ bottom:-1px; left:-1px; border-right:none; border-top:none; }
+
+  h1{
+    font-size:clamp(28px,5vw,42px);
+    font-weight:900;
+    line-height:1.25;
+    margin-bottom:10px;
+  }
+  h1 .en{ font-family:var(--mono); color:var(--mint); font-weight:700; font-size:.5em; display:block; margin-top:6px; letter-spacing:1px;}
+  .hero-desc{ color:var(--text-dim); font-size:15.5px; line-height:1.9; max-width:640px; margin-top:14px; }
+
+  .meta-row{ display:flex; gap:22px; margin-top:22px; flex-wrap:wrap; font-family:var(--mono); font-size:12px; color:var(--text-dim); }
+  .meta-row span b{ color:var(--cyan); font-weight:700; }
+
+  .timeline-strip{
+    margin-top:28px;
+    border:1px solid rgba(43,227,246,.3);
+    border-radius:3px;
+    background:var(--panel-2);
+    padding:14px 16px;
+    display:flex; gap:4px; align-items:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .clip{
+    height:26px; border-radius:2px;
+    background:linear-gradient(180deg, rgba(43,227,246,.35), rgba(43,227,246,.12));
+    border:1px solid rgba(43,227,246,.5);
+    position:relative;
+  }
+  .clip.cut::after{
+    content:''; position:absolute; top:-4px; bottom:-4px; left:50%;
+    width:2px; background:var(--red); box-shadow:0 0 6px var(--red);
+  }
+  .playhead{
+    position:absolute; top:6px; bottom:6px; width:2px; background:var(--mint);
+    box-shadow:0 0 10px var(--mint);
+    animation:scrub 4s linear infinite;
+  }
+  @keyframes scrub{ 0%{ left:2%; } 100%{ left:96%; } }
+
+  .section-title{
+    display:flex; align-items:center; gap:12px;
+    margin:44px 0 18px;
+  }
+  .section-title .num{ font-family:var(--mono); color:var(--mint); font-size:13px; border:1px solid rgba(61,255,176,.4); padding:2px 8px; border-radius:2px;}
+  .section-title h2{ font-size:19px; font-weight:700; }
+  .section-title::after{ content:''; flex:1; height:1px; background:linear-gradient(90deg, rgba(43,227,246,.3), transparent); }
+
+  .intro-note{
+    color:var(--text-dim); font-size:14.5px; line-height:1.95; margin-bottom:6px;
+  }
+
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:640px){ .grid{ grid-template-columns:1fr; } }
+
+  .card{
+    border:1px solid rgba(43,227,246,.35);
+    border-radius:3px;
+    padding:20px;
+    background:var(--panel);
+    transition:border-color .2s, transform .2s;
+  }
+  .card:hover{ border-color:var(--cyan); transform:translateY(-2px); }
+  .card-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .card-icon{ font-family:var(--mono); color:var(--mint); font-size:13px; }
+  .card h3{ font-size:15.5px; font-weight:700; }
+  .card p{ color:var(--text-dim); font-size:13.5px; line-height:1.85; }
+  .card .en-term{ font-family:var(--mono); color:var(--cyan); font-size:12px; }
+  .card .example{
+    margin-top:10px; padding-top:10px; border-top:1px dashed rgba(43,227,246,.25);
+    font-size:12.5px; color:var(--mint);
+  }
+  .card .example b{ color:var(--text-dim); font-weight:400; }
+
+  .steps{ display:flex; flex-direction:column; gap:0; border-top:1px solid rgba(43,227,246,.15); }
+  .step{
+    display:flex; gap:18px; align-items:flex-start;
+    padding:18px 4px;
+    border-bottom:1px solid rgba(43,227,246,.15);
+  }
+  .step .idx{
+    font-family:var(--mono); color:var(--bg); background:var(--mint);
+    width:30px; height:30px; min-width:30px; border-radius:2px;
+    display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700;
+  }
+  .step .body h4{ font-size:14.5px; margin-bottom:4px; font-weight:700; }
+  .step .body p{ color:var(--text-dim); font-size:13px; line-height:1.8; }
+
+  .kbd-row{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+  .kbd{
+    font-family:var(--mono); font-size:12px; color:var(--mint);
+    border:1px solid rgba(61,255,176,.4); background:rgba(61,255,176,.05);
+    padding:6px 10px; border-radius:2px; display:flex; gap:8px; align-items:center;
+  }
+  .kbd b{ color:var(--text); font-weight:400; font-family:var(--arabic); }
+
+  /* mistakes list */
+  .mistakes{ display:flex; flex-direction:column; gap:12px; }
+  .mistake{
+    display:flex; gap:14px; align-items:flex-start;
+    border-right:2px solid var(--red);
+    background:rgba(255,92,92,.05);
+    padding:14px 16px; border-radius:2px;
+  }
+  .mistake .mark{ font-family:var(--mono); color:var(--red); font-size:14px; font-weight:700; }
+  .mistake h4{ font-size:14px; margin-bottom:3px; }
+  .mistake p{ color:var(--text-dim); font-size:13px; line-height:1.8; }
+  .mistake .fix{ color:var(--mint); font-size:12.5px; margin-top:5px; }
+  .mistake .fix b{ color:var(--text-dim); font-weight:400; }
+
+  /* recap */
+  .recap-box{
+    border:1px solid rgba(61,255,176,.35); border-radius:3px;
+    background:rgba(61,255,176,.04); padding:22px 24px; margin-top:44px;
+  }
+  .recap-box h3{ font-size:16px; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .recap-list{ display:flex; flex-direction:column; gap:10px; }
+  .recap-list li{ list-style:none; display:flex; gap:10px; font-size:13.5px; color:var(--text-dim); line-height:1.8; }
+  .recap-list li::before{ content:'✓'; color:var(--mint); font-weight:700; }
+
+  /* download cta */
+  .cta{
+    margin-top:32px; border:1px solid var(--amber); border-radius:4px;
+    padding:26px; background:rgba(255,184,77,.04);
+    display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;
+  }
+  .cta-info h3{ font-size:16px; margin-bottom:6px; }
+  .cta-info p{ color:var(--text-dim); font-size:13px; margin-bottom:8px; }
+  .file-meta{ font-family:var(--mono); font-size:11.5px; color:var(--amber); display:flex; gap:14px; flex-wrap:wrap; }
+  .btn{
+    font-family:var(--arabic); font-weight:700; font-size:14px;
+    background:var(--mint); color:#04140d; border:none;
+    padding:12px 26px; border-radius:22px; cursor:pointer;
+    transition:transform .15s, box-shadow .15s;
+    white-space:nowrap; text-decoration:none; display:inline-block;
+  }
+  .btn:hover{ transform:translateY(-1px); box-shadow:0 4px 18px rgba(61,255,176,.35); }
+  .btn.amber{ background:var(--amber); }
+  .btn.amber:hover{ box-shadow:0 4px 18px rgba(255,184,77,.35); }
+
+  footer{ text-align:center; margin-top:50px; font-family:var(--mono); font-size:11px; color:var(--text-dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <a href="#" class="back-link">→ رجوع لكل الدروس</a>
+    <span class="progress-tag">الدرس 01 / 07</span>
+  </div>
+
+  <div class="eyebrow"><span class="dot"></span> LESSON LOADED</div>
+
+  <div class="hero-box">
+    <h1>مرحلة القص والتحرير<span class="en">EDITING BASICS</span></h1>
+    <p class="hero-desc">
+      ده قلب أي مونتاج. في الدرس ده هنفهم أنواع القص المختلفة، إزاي ترتب مشاهدك على الـTimeline بشكل احترافي، أشهر الأخطاء اللي بتبوّظ أي مشروع، وإيه أهم الاختصارات اللي هتوفرلك وقتك وانت شغال.
+    </p>
+    <div class="meta-row">
+      <span>⏱ <b>52 دقيقة</b></span>
+      <span>📦 <b>ملف تدريب واحد</b></span>
+      <span>🎯 <b>مستوى مبتدئ</b></span>
+    </div>
+
+    <div class="timeline-strip">
+      <div class="playhead"></div>
+      <div class="clip" style="width:18%"></div>
+      <div class="clip cut" style="width:12%"></div>
+      <div class="clip" style="width:22%"></div>
+      <div class="clip cut" style="width:9%"></div>
+      <div class="clip" style="width:15%"></div>
+      <div class="clip" style="width:20%"></div>
+    </div>
+  </div>
+
+  <p class="intro-note">
+    قبل ما تبدأ، اعرف إن القص مش مجرد إنك "تقطع وتوصل" — هو اللي بيحدد إيقاع الفيديو كله وإحساس المشاهد بيه. أي حد ممكن يقص، بس المونتير المحترف هو اللي يعرف يقص في اللحظة الصح وبالطريقة الصح. الأقسام الجاية هتوريك ده عملي.
+  </p>
+
+  <div class="section-title"><span class="num">01</span><h2>أنواع القص</h2></div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-head"><span class="card-icon">✂</span><h3>القص المباشر</h3></div>
+      <p><span class="en-term">Straight Cut</span> — الانتقال العادي من لقطة للتانية من غير أي تأثير، وهو الأساس اللي بيتبني عليه أي مونتاج.</p>
+      <div class="example"><b>مثال:</b> لقطة وش المتكلم تتقطع لقطة اللي بيتكلم عنه، من غير فيد ولا تأثير.</div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-icon">✂</span><h3>قص J و L</h3></div>
+      <p><span class="en-term">J-Cut / L-Cut</span> — الصوت بييجي أو بيفضل قبل الصورة، بيخلي الانتقال بين المشاهد حسي ومش مقطوع فجأة.</p>
+      <div class="example"><b>مثال:</b> تسمع صوت المتكلم قبل ما تشوف وشه بثانية — ده J-Cut.</div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-icon">✂</span><h3>القطع المفاجئ</h3></div>
+      <p><span class="en-term">Jump Cut</span> — قص سريع في نفس اللقطة بيدي إحساس بالسرعة أو التوتر، بيتستخدم كتير في الفلوجات.</p>
+      <div class="example"><b>مثال:</b> يوتيوبر بيشيل السكتات من كلامه فتبان الحركة "قافزة" بين الجمل.</div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-icon">✂</span><h3>اللقطة العابرة</h3></div>
+      <p><span class="en-term">Cutaway</span> — لقطة جانبية بتتحط بين لقطتين تانيين عشان تغطي قطع أو تضيف سياق.</p>
+      <div class="example"><b>مثال:</b> وانت بتقص كلام طويل، تحط لقطة إيد بتكتب عشان تغطي القطع في الصوت.</div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-icon">✂</span><h3>القص المتوازي</h3></div>
+      <p><span class="en-term">Cross Cutting</span> — تنقل بين حدثين بيحصلوا في نفس الوقت في مكانين مختلفين عشان تبني توتر أو تقارن بينهم.</p>
+      <div class="example"><b>مثال:</b> مشهد مطاردة بينقل بين السايق والراكب اللي بيتصل بالبوليس.</div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-icon">✂</span><h3>القص على الحركة</h3></div>
+      <p><span class="en-term">Match Cut / Cutting on Action</span> — تقص في نص حركة (زي فتح باب) عشان الانتقال يبقى سلس وعين المشاهد ما تحسش بالقطع.</p>
+      <div class="example"><b>مثال:</b> واحد بيقوم من الكرسي، تقص نص الحركة على لقطة تانية بيه وهو واقف بالفعل.</div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="num">02</span><h2>خطوات تنظيم الـ Timeline</h2></div>
+  <div class="steps">
+    <div class="step">
+      <span class="idx">1</span>
+      <div class="body">
+        <h4>رتب الميديا في Bins</h4>
+        <p>قبل ما تبدأ القص، اعمل مجلدات (Bins) لكل نوع ميديا: فيديو، صوت، صور — ده بيوفر وقت كبير بعدين، خصوصاً في المشاريع الطويلة.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="idx">2</span>
+      <div class="body">
+        <h4>استخدم الـ Tracks بذكاء</h4>
+        <p>خصص Track لكل عنصر: الفيديو الرئيسي، الـB-roll، النصوص، الموسيقى — بدل ما تكدسهم فوق بعض في Track واحد.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="idx">3</span>
+      <div class="body">
+        <h4>حط Markers على النقط المهمة</h4>
+        <p>استخدم الـMarkers عشان تعلّم على نقط الإيقاع في الموسيقى، أو اللحظات اللي محتاجة تعديل تاني، أو مكان إضافة تأثير.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="idx">4</span>
+      <div class="body">
+        <h4>لوّن الـ Clips حسب النوع</h4>
+        <p>Premiere بيدّيك تلوّن كل كليب — خلي كل نوع لقطة لونه (مقابلات لون، B-roll لون تاني) عشان تلاقي اللي محتاجه بسرعة.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="idx">5</span>
+      <div class="body">
+        <h4>اعمل الـ Rough Cut الأول</h4>
+        <p>اعمل نسخة أولية سريعة من غير تركيز على التفاصيل، هدفها بس ترتيب القصة، وبعدين ارجعلها بعين نقدية.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="idx">6</span>
+      <div class="body">
+        <h4>راجع الإيقاع (Fine Cut)</h4>
+        <p>بعد ما القصة اترتبت، ارجع لكل قطعة وظبط توقيتها بالثانية، وده اللي بيفرق بين الشغل الهاوي والاحترافي.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="num">03</span><h2>أخطاء شائعة لازم تتجنبها</h2></div>
+  <div class="mistakes">
+    <div class="mistake">
+      <span class="mark">✕</span>
+      <div>
+        <h4>القص في نص جملة أو حركة من غير سبب</h4>
+        <p>ده بيكسر إيقاع الفيديو وبيحس المشاهد إن فيه حاجة "اتقطعت" غلط.</p>
+        <div class="fix"><b>الحل:</b> استنى نهاية الجملة أو استخدم Cutaway يغطي القطع.</div>
+      </div>
+    </div>
+    <div class="mistake">
+      <span class="mark">✕</span>
+      <div>
+        <h4>استخدام نفس نوع القص في كل الفيديو</h4>
+        <p>لو كله Straight Cut من الأول للآخر، الفيديو بيبقى مسطح وممل.</p>
+        <div class="fix"><b>الحل:</b> نوّع بين الأنواع حسب الإحساس اللي عايزه في كل جزء.</div>
+      </div>
+    </div>
+    <div class="mistake">
+      <span class="mark">✕</span>
+      <div>
+        <h4>إهمال الـ Audio Sync وانت بتقص</h4>
+        <p>قص من غير ما تتابع الصوت بيخلق فجوات أو تداخل صوتي وحش.</p>
+        <div class="fix"><b>الحل:</b> اشتغل بالـWaveform ظاهر قدامك على الـTrack طول الوقت.</div>
+      </div>
+    </div>
+    <div class="mistake">
+      <span class="mark">✕</span>
+      <div>
+        <h4>ما بتحفظش نسخ من مراحل الشغل</h4>
+        <p>لو حصل مشكلة أو غيرت رأيك، ملقتش نسخة ترجع لها.</p>
+        <div class="fix"><b>الحل:</b> Save As نسخة جديدة بعد كل مرحلة كبيرة (Rough Cut, Fine Cut...).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="num">04</span><h2>اختصارات هتوفرلك وقتك</h2></div>
+  <div class="kbd-row">
+    <div class="kbd"><span>C</span><b>أداة القص</b></div>
+    <div class="kbd"><span>V</span><b>أداة التحديد</b></div>
+    <div class="kbd"><span>Ctrl+K</span><b>تقسيم اللقطة</b></div>
+    <div class="kbd"><span>Q / W</span><b>Ripple Trim</b></div>
+    <div class="kbd"><span>Space</span><b>تشغيل / إيقاف</b></div>
+    <div class="kbd"><span>Ctrl+Z</span><b>تراجع</b></div>
+    <div class="kbd"><span>M</span><b>إضافة Marker</b></div>
+    <div class="kbd"><span>Shift+Delete</span><b>حذف مع سد الفجوة</b></div>
+  </div>
+
+  <div class="recap-box">
+    <h3>📌 خلاصة الدرس</h3>
+    <ul class="recap-list">
+      <li>6 أنواع قص أساسية، وكل واحد بيدي إحساس مختلف للمشاهد.</li>
+      <li>تنظيم الـTimeline من الأول (Bins, Tracks, Markers) بيوفر وقت جبار بعدين.</li>
+      <li>القص مش مجرد أداة — هو قرار فني بيتحكم في إيقاع الفيديو.</li>
+      <li>الاختصارات مش رفاهية، هي اللي بتفرق بين اللي بيشتغل بسرعة واللي بيضيع وقته.</li>
+    </ul>
+  </div>
+
+  <div class="cta">
+    <div class="cta-info">
+      <h3>ملف التدريب جاهز للتحميل</h3>
+      <p>حمّل الفوتيج وقص المشهد بنفسك مستخدم كل الأنواع اللي اتعلمناها في الدرس ده.</p>
+      <div class="file-meta">
+        <span>📁 editing-basics-practice.zip</span>
+        <span>💾 480 MB</span>
+        <span>🎞 6 كليبات خام</span>
+      </div>
+    </div>
+    <a href="#" class="btn amber" download>تحميل ملف التمرين ↓</a>
+  </div>
+
+  <footer>ADOBE PREMIERE PRO — COURSE MODULE 01</footer>
+</div>
+</body>
+</html>
