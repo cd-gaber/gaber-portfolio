@@ -47,11 +47,4 @@ document.addEventListener('click', () => {
 // Auto Skip Intro
 setTimeout(() => {
     skipIntro();
-}, 6000);
-
-// Intro Once
-if (localStorage.getItem('introSeen')) {
-    document.getElementById('introOverlay').style.display = 'none';
-} else {
-    localStorage.setItem('introSeen', 'true');
-}
+}, 15000);
