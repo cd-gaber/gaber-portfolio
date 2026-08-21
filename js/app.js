@@ -23,28 +23,11 @@ window.onscroll = function () {
 function skipIntro() {
     document
         .getElementById('introOverlay')
-        .classList
-        .add('hidden');
-    document
-        .getElementById('welcomeSound')
-        .pause();
-}
+        .classList.add('hidden');
 
-// Welcome Audio
-document.addEventListener('click', () => {
     const audio = document.getElementById('welcomeSound');
-    if (
-        audio.src &&
-        audio.src !== window.location.href + '#'
-    ) {
-        audio.volume = 0.7;
-        audio.play().catch(e =>
-            console.log('Audio play prevented')
-        );
+    if (audio) {
+        audio.volume = 0.5;
+        audio.play().catch(e => console.log('Audio blocked'));
     }
-}, { once: true });
-
-// Auto Skip Intro
-setTimeout(() => {
-    skipIntro();
-}, 15000);
+}
